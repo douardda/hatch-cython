@@ -1,6 +1,6 @@
 from collections.abc import Generator
 from dataclasses import asdict, dataclass, field
-from importlib import import_module
+from importlib import import_module, util as im_util
 from os import path
 from typing import Optional
 
@@ -167,7 +167,13 @@ class Config:
         cls: BuildHookInterface,
         im: Autoimport,
     ):
-        mod = import_module(im.pkg)
+        if im.path is not None:
+            mspec = im_util.spec_from_file_location(im.pkg, im.path)
+            mod = im_util.module_from_spec(mspec)
+            mspec.loader.exec_module(mod)
+        else:
+            mod = import_module(im.pkg)
+
         self._post_import_attr(
             cls,
             im,

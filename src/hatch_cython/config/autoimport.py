@@ -6,6 +6,7 @@ class Autoimport:
     pkg: str
 
     include: str
+    path: str = field(default=None)
     libraries: str = field(default=None)
     library_dirs: str = field(default=None)
     required_call: str = field(default=None)
